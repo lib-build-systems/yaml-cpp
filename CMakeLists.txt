@@ -301,7 +301,7 @@ if (YAML_CPP_INSTALL)
 endif()
 
 export( TARGETS yaml-cpp
-        FILE "${PROJECT_BINARY_DIR}/yaml-cpp-targets.cmake")
+        FILE "${PROJECT_BINARY_DIR}/yaml-cpp.cmake")
 export(PACKAGE yaml-cpp)
 set(EXPORT_TARGETS yaml-cpp CACHE INTERNAL "export targets")
 
