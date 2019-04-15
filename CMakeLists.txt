@@ -158,20 +158,20 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
 	if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 		set(CMAKE_BUILD_TYPE Release)
 	endif()
-	#
-	set(GCC_EXTRA_OPTIONS "")
-	#
+
+	#set(GCC_EXTRA_OPTIONS "")
+    
 	if(BUILD_SHARED_LIBS)
 		set(GCC_EXTRA_OPTIONS "${GCC_EXTRA_OPTIONS} -fPIC")
 	endif()
-	#
-	set(FLAG_TESTED "-Wextra -Wshadow -Weffc++ -pedantic -pedantic-errors")
+	
+	#set(FLAG_TESTED "-Wextra -Wshadow -Weffc++ -pedantic -pedantic-errors")
 	check_cxx_compiler_flag(${FLAG_TESTED} FLAG_WEXTRA)
 	if(FLAG_WEXTRA)
 		set(GCC_EXTRA_OPTIONS "${GCC_EXTRA_OPTIONS} ${FLAG_TESTED}")
 	endif()
-	#
-	set(yaml_cxx_flags "-Wall ${GCC_EXTRA_OPTIONS} -pedantic -Wno-long-long ${yaml_cxx_flags}")
+	
+	#set(yaml_cxx_flags "-Wall ${GCC_EXTRA_OPTIONS} -pedantic -Wno-long-long ${yaml_cxx_flags}")
 
 	### Make specific
 	if(${CMAKE_BUILD_TOOL} MATCHES make OR ${CMAKE_BUILD_TOOL} MATCHES gmake)
@@ -195,7 +195,7 @@ if(MSVC)
 	#     http://msdn.microsoft.com/en-us/library/2kzt1wy3(v=VS.71).aspx
 	set(LIB_RT_SUFFIX "md")	# CMake defaults to /MD for MSVC
 	set(LIB_RT_OPTION "/MD")
-	#
+	
 	if(NOT MSVC_SHARED_RT)	# User wants to have static runtime libraries (/MT, /ML)
 		if(MSVC_STHREADED_RT)	# User wants to have old single-threaded static runtime libraries
 			set(LIB_RT_SUFFIX "ml")
@@ -220,7 +220,7 @@ if(MSVC)
 			endforeach()
 		endforeach()
 	endif()
-	#
+	
 	set(LABEL_SUFFIX "${LABEL_SUFFIX} ${LIB_RT_SUFFIX}")
 
 	# b) Change prefix for static libraries
@@ -309,7 +309,7 @@ set(CONFIG_INCLUDE_DIRS "${YAML_CPP_SOURCE_DIR}/include")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config.cmake.in
                 "${PROJECT_BINARY_DIR}/yaml-cpp-config.cmake" @ONLY)
 
-file(RELATIVE_PATH REL_INCLUDE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp" "${CMAKE_INSTALL_PREFIX}/${INCLUDE_INSTALL_ROOT_DIR}")
+file(RELATIVE_PATH REL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp" "${CMAKE_INSTALL_PREFIX}/${INCLUDE_INSTALL_ROOT_DIR}")
 set(CONFIG_INCLUDE_DIRS "\${YAML_CPP_CMAKE_DIR}/${REL_INCLUDE_DIR}")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config.cmake.in
                 "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake" @ONLY)
@@ -321,15 +321,15 @@ if (YAML_CPP_INSTALL)
 	install(FILES
             "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake"
             "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake"
-            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp" COMPONENT dev)
+            DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp" COMPONENT dev)
             
 	install(EXPORT yaml-cpp
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp)
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
 
 	if(UNIX)
 		set(PC_FILE ${CMAKE_BINARY_DIR}/yaml-cpp.pc)
 		configure_file("yaml-cpp.pc.cmake" ${PC_FILE} @ONLY)
-		install(FILES ${PC_FILE} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp)
+		install(FILES ${PC_FILE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
 	endif()
 
 endif()
