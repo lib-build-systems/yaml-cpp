@@ -52,24 +52,26 @@ option(MSVC_STHREADED_RT "MSVC: Build with single-threaded static runtime libs (
 # From http://www.cmake.org/pipermail/cmake/2010-March/035992.html:
 # function to collect all the sources from sub-directories
 # into a single list
-function(add_sources)
+function (add_sources)
   get_property(is_defined GLOBAL PROPERTY SRCS_LIST DEFINED)
-  if(NOT is_defined)
+  if (NOT is_defined)
     define_property(GLOBAL PROPERTY SRCS_LIST
       BRIEF_DOCS "List of source files"
       FULL_DOCS "List of all source files in the entire project")
-  endif()
+  endif ()
+  
   # make absolute paths
   set(SRCS)
-  foreach(s IN LISTS ARGN)
-    if(NOT IS_ABSOLUTE "${s}")
+  foreach (s IN LISTS ARGN)
+    if (NOT IS_ABSOLUTE "${s}")
       get_filename_component(s "${s}" ABSOLUTE)
-    endif()
+    endif ()
     list(APPEND SRCS "${s}")
-  endforeach()
+  endforeach ()
+  
   # append to global list
   set_property(GLOBAL APPEND PROPERTY SRCS_LIST "${SRCS}")
-endfunction(add_sources)
+endfunction ()
 
 set(header_directory "include/yaml-cpp/")
 
@@ -77,13 +79,13 @@ file(GLOB sources "src/[a-zA-Z]*.cpp")
 file(GLOB_RECURSE public_headers "include/yaml-cpp/[a-zA-Z]*.h")
 file(GLOB private_headers "src/[a-zA-Z]*.h")
 
-if(YAML_CPP_BUILD_CONTRIB)
+if (YAML_CPP_BUILD_CONTRIB)
 	file(GLOB contrib_sources "src/contrib/[a-zA-Z]*.cpp")
 	file(GLOB contrib_public_headers "include/yaml-cpp/contrib/[a-zA-Z]*.h")
 	file(GLOB contrib_private_headers "src/contrib/[a-zA-Z]*.h")
-else()
+else ()
 	add_definitions(-DYAML_CPP_NO_CONTRIB)
-endif()
+endif ()
 
 set(library_sources
   ${sources}
@@ -95,19 +97,19 @@ set(library_sources
 )
 add_sources(${library_sources})
 
-if(VERBOSE)
+if (VERBOSE)
 	message(STATUS "sources: ${sources}")
 	message(STATUS "public_headers: ${public_headers}")
 	message(STATUS "private_headers: ${private_headers}")
 	message(STATUS "contrib_sources: ${contrib_sources}")
 	message(STATUS "contrib_public_headers: ${contrib_public_headers}")
 	message(STATUS "contrib_private_headers: ${contrib_private_headers}")
-endif()
+endif ()
 
 if (CMAKE_VERSION VERSION_LESS 2.8.12)
     include_directories(${YAML_CPP_SOURCE_DIR}/src)
     include_directories(${YAML_CPP_SOURCE_DIR}/include)
-endif()
+endif ()
 
 
 ###
@@ -116,78 +118,78 @@ endif()
 set(yaml_c_flags ${CMAKE_C_FLAGS})
 set(yaml_cxx_flags ${CMAKE_CXX_FLAGS})
 
-if(BUILD_SHARED_LIBS)
+if (BUILD_SHARED_LIBS)
 	set(LABEL_SUFFIX "shared")
-else()
+else ()
 	set(LABEL_SUFFIX "static")
-endif()
+endif ()
 
-if(APPLE)
-	if(APPLE_UNIVERSAL_BIN)
+if (APPLE)
+	if (APPLE_UNIVERSAL_BIN)
 		set(CMAKE_OSX_ARCHITECTURES ppc;i386)
-	endif()
-endif()
+	endif ()
+endif ()
 
-if(IPHONE)
+if (IPHONE)
 	set(CMAKE_OSX_SYSROOT "iphoneos4.2")
 	set(CMAKE_OSX_ARCHITECTURES "armv6;armv7")
-endif()
+endif ()
 
-if(WIN32)
-	if(BUILD_SHARED_LIBS)
+if (WIN32)
+	if (BUILD_SHARED_LIBS)
 		add_definitions(-D${PROJECT_NAME}_DLL)	# use or build Windows DLL
-	endif()
-	if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+	endif ()
+	if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 		set(CMAKE_INSTALL_PREFIX "C:/")
-	endif()
-endif()
+	endif ()
+endif ()
 
 # GCC or Clang or Intel Compiler specialities
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
    (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT "x${CMAKE_CXX_SIMULATE_ID}" STREQUAL "xMSVC") OR
    CMAKE_CXX_COMPILER_ID MATCHES "Intel")
 
 	### General stuff
-	if(WIN32)
+	if (WIN32)
 		set(CMAKE_SHARED_LIBRARY_PREFIX "")	# DLLs do not have a "lib" prefix
 		set(CMAKE_IMPORT_LIBRARY_PREFIX "")	# same for DLL import libs
 		set(CMAKE_LINK_DEF_FILE_FLAG "")	# CMake workaround (2.8.3)
-	endif()
+	endif ()
 
 	### Project stuff
-	if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+	if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 		set(CMAKE_BUILD_TYPE Release)
-	endif()
+	endif ()
 
 	#set(GCC_EXTRA_OPTIONS "")
     
-	if(BUILD_SHARED_LIBS)
+	if (BUILD_SHARED_LIBS)
 		set(GCC_EXTRA_OPTIONS "${GCC_EXTRA_OPTIONS} -fPIC")
-	endif()
+	endif ()
 	
 	#set(FLAG_TESTED "-Wextra -Wshadow -Weffc++ -pedantic -pedantic-errors")
 	check_cxx_compiler_flag(${FLAG_TESTED} FLAG_WEXTRA)
-	if(FLAG_WEXTRA)
+	if (FLAG_WEXTRA)
 		set(GCC_EXTRA_OPTIONS "${GCC_EXTRA_OPTIONS} ${FLAG_TESTED}")
-	endif()
+	endif ()
 	
 	#set(yaml_cxx_flags "-Wall ${GCC_EXTRA_OPTIONS} -pedantic -Wno-long-long ${yaml_cxx_flags}")
 
 	### Make specific
-	if(${CMAKE_BUILD_TOOL} MATCHES make OR ${CMAKE_BUILD_TOOL} MATCHES gmake)
+	if (${CMAKE_BUILD_TOOL} MATCHES make OR ${CMAKE_BUILD_TOOL} MATCHES gmake)
 		add_custom_target(debuggable ${CMAKE_MAKE_PROGRAM} clean
-			COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Debug ${CMAKE_SOURCE_DIR}
-			COMMENT "Adjusting settings for debug compilation"
-			VERBATIM)
+			              COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Debug ${CMAKE_SOURCE_DIR}
+			              COMMENT "Adjusting settings for debug compilation"
+			              VERBATIM)
 		add_custom_target(releasable ${CMAKE_MAKE_PROGRAM} clean
-			COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release ${CMAKE_SOURCE_DIR}
-			COMMENT "Adjusting settings for release compilation"
-			VERBATIM)
-	endif()
-endif()
+			              COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release ${CMAKE_SOURCE_DIR}
+			              COMMENT "Adjusting settings for release compilation"
+	    		          VERBATIM)
+	endif ()
+endif ()
 
 # Microsoft VisualC++ specialities
-if(MSVC)
+if (MSVC)
 	### General stuff
 	# a) Change MSVC runtime library settings (/MD[d], /MT[d], /ML[d] (single-threaded until VS 2003))
 	#    plus set lib suffix for later use and project label accordingly
@@ -196,30 +198,32 @@ if(MSVC)
 	set(LIB_RT_SUFFIX "md")	# CMake defaults to /MD for MSVC
 	set(LIB_RT_OPTION "/MD")
 	
-	if(NOT MSVC_SHARED_RT)	# User wants to have static runtime libraries (/MT, /ML)
-		if(MSVC_STHREADED_RT)	# User wants to have old single-threaded static runtime libraries
+	if (NOT MSVC_SHARED_RT)	# User wants to have static runtime libraries (/MT, /ML)
+		if (MSVC_STHREADED_RT)	# User wants to have old single-threaded static runtime libraries
 			set(LIB_RT_SUFFIX "ml")
 			set(LIB_RT_OPTION "/ML")
-			if(NOT ${MSVC_VERSION} LESS 1400)
+            
+			if (NOT ${MSVC_VERSION} LESS 1400)
 				message(FATAL_ERROR "Single-threaded static runtime libraries (/ML) only available until VS .NET 2003 (7.1).")
-			endif()
-		else()
+			endif ()
+		else ()
 			set(LIB_RT_SUFFIX "mt")
 			set(LIB_RT_OPTION "/MT")
-		endif()
+		endif ()
 
 		# correct linker options
-		foreach(flag_var  CMAKE_C_FLAGS  CMAKE_CXX_FLAGS)
-			foreach(config_name  ""  DEBUG  RELEASE  MINSIZEREL  RELWITHDEBINFO)
+		foreach (flag_var  CMAKE_C_FLAGS  CMAKE_CXX_FLAGS)
+			foreach (config_name  ""  DEBUG  RELEASE  MINSIZEREL  RELWITHDEBINFO)
 				set(var_name "${flag_var}")
-				if(NOT "${config_name}" STREQUAL "")
+				if (NOT "${config_name}" STREQUAL "")
 					set(var_name "${var_name}_${config_name}")
-				endif()
+				endif ()
+                
 				string(REPLACE "/MD" "${LIB_RT_OPTION}" ${var_name} "${${var_name}}")
 				set(${var_name} "${${var_name}}" CACHE STRING "" FORCE)
-			endforeach()
-		endforeach()
-	endif()
+			endforeach ()
+		endforeach ()
+	endif ()
 	
 	set(LABEL_SUFFIX "${LABEL_SUFFIX} ${LIB_RT_SUFFIX}")
 
@@ -227,17 +231,17 @@ if(MSVC)
 	set(CMAKE_STATIC_LIBRARY_PREFIX "lib")	# to distinguish static libraries from DLL import libs
 
 	# c) Correct suffixes for static libraries
-	if(NOT BUILD_SHARED_LIBS)
+	if (NOT BUILD_SHARED_LIBS)
 		### General stuff
 		set(LIB_TARGET_SUFFIX "${LIB_SUFFIX}${LIB_RT_SUFFIX}")
-	endif()
+	endif ()
 
 	### Project stuff
 	# /W3 = set warning level; see http://msdn.microsoft.com/en-us/library/thxezb7y.aspx
 	# /wd4127 = disable warning C4127 "conditional expression is constant"; see http://msdn.microsoft.com/en-us/library/6t66728h.aspx
 	# /wd4355 = disable warning C4355 "'this' : used in base member initializer list"; http://msdn.microsoft.com/en-us/library/3c594ae3.aspx
 	set(yaml_cxx_flags "/W3 /wd4127 /wd4355 ${yaml_cxx_flags}")
-endif()
+endif ()
 
 
 ###
@@ -279,8 +283,8 @@ if(IPHONE)
 	)
 endif()
 
-if(MSVC)
-	if(NOT BUILD_SHARED_LIBS)
+if (MSVC)
+	if (NOT BUILD_SHARED_LIBS)
 		# correct library names
 		set_target_properties(yaml-cpp PROPERTIES
                               DEBUG_POSTFIX "${LIB_TARGET_SUFFIX}d"
@@ -288,20 +292,20 @@ if(MSVC)
                               MINSIZEREL_POSTFIX "${LIB_TARGET_SUFFIX}"
                               RELWITHDEBINFO_POSTFIX "${LIB_TARGET_SUFFIX}"
 		)
-	endif()
-endif()
+	endif ()
+endif ()
 
 if (YAML_CPP_INSTALL)
 	install(TARGETS yaml-cpp
-            EXPORT yaml-cpp)
+            EXPORT yaml-cpp-targets)
 	install(DIRECTORY ${header_directory}
             DESTINATION ${INCLUDE_INSTALL_DIR}
             FILES_MATCHING PATTERN "*.h"
 	)
-endif()
+endif ()
 
-export( TARGETS yaml-cpp
-        FILE "${PROJECT_BINARY_DIR}/yaml-cpp.cmake")
+export(TARGETS yaml-cpp
+       FILE "${PROJECT_BINARY_DIR}/yaml-cpp.cmake")
 export(PACKAGE yaml-cpp)
 set(EXPORT_TARGETS yaml-cpp CACHE INTERNAL "export targets")
 
@@ -323,33 +327,33 @@ if (YAML_CPP_INSTALL)
             "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp" COMPONENT dev)
             
-	install(EXPORT yaml-cpp
+	install(EXPORT yaml-cpp-targets
             DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
 
-	if(UNIX)
+	if (UNIX)
 		set(PC_FILE ${CMAKE_BINARY_DIR}/yaml-cpp.pc)
 		configure_file("yaml-cpp.pc.cmake" ${PC_FILE} @ONLY)
-		install(FILES ${PC_FILE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
-	endif()
-
-endif()
+		install(FILES ${PC_FILE}
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
+	endif ()
+endif ()
 
 
 ###
 ### Extras
 ###
-if(YAML_CPP_BUILD_TESTS)
-	enable_testing()
-	add_subdirectory(test)
-endif()
+if (YAML_CPP_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif ()
 
-if(YAML_CPP_BUILD_TOOLS)
-	add_subdirectory(util)
-endif()
+if (YAML_CPP_BUILD_TOOLS)
+    add_subdirectory(util)
+endif ()
 
 ### Formatting
 get_property(all_sources GLOBAL PROPERTY SRCS_LIST)
 add_custom_target(format
-	COMMAND clang-format --style=file -i ${all_sources}
-	COMMENT "Running clang-format"
-	VERBATIM)
+                  COMMAND clang-format --style=file -i ${all_sources}
+                  COMMENT "Running clang-format"
+                  VERBATIM)
