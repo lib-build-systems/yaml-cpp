@@ -305,6 +305,7 @@ if (YAML_CPP_INSTALL)
 endif ()
 
 export(TARGETS yaml-cpp
+       NAMESPACE yaml-cpp::
        FILE "${PROJECT_BINARY_DIR}/yaml-cpp.cmake")
 export(PACKAGE yaml-cpp)
 set(EXPORT_TARGETS yaml-cpp CACHE INTERNAL "export targets")
@@ -327,7 +328,8 @@ if (YAML_CPP_INSTALL)
             "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp" COMPONENT dev)
             
-	install(EXPORT yaml-cpp-targets
+    install(EXPORT yaml-cpp-targets
+            NAMESPACE yaml-cpp::
             DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
 
 	if (UNIX)
