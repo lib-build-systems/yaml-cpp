@@ -168,10 +168,10 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
 	endif ()
 	
 	#set(FLAG_TESTED "-Wextra -Wshadow -Weffc++ -pedantic -pedantic-errors")
-	check_cxx_compiler_flag(${FLAG_TESTED} FLAG_WEXTRA)
-	if (FLAG_WEXTRA)
-		set(GCC_EXTRA_OPTIONS "${GCC_EXTRA_OPTIONS} ${FLAG_TESTED}")
-	endif ()
+	#check_cxx_compiler_flag(${FLAG_TESTED} FLAG_WEXTRA)
+	#if (FLAG_WEXTRA)
+	#	set(GCC_EXTRA_OPTIONS "${GCC_EXTRA_OPTIONS} ${FLAG_TESTED}")
+	#endif ()
 	
 	#set(yaml_cxx_flags "-Wall ${GCC_EXTRA_OPTIONS} -pedantic -Wno-long-long ${yaml_cxx_flags}")
 
