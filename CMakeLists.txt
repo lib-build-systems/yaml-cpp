@@ -323,21 +323,21 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config-version.cmake.in
                 "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake" @ONLY)
 
 if (YAML_CPP_INSTALL)
-	install(FILES
+    install(FILES
             "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake"
             "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake"
-            DESTINATION lib/cmake/yaml-cpp
-	    COMPONENT dev)
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp
+            COMPONENT dev)
             
     install(EXPORT yaml-cpp-targets
             NAMESPACE yaml-cpp::
-            DESTINATION lib/cmake/yaml-cpp)
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp)
 
 	if (UNIX)
 		set(PC_FILE ${CMAKE_BINARY_DIR}/yaml-cpp.pc)
 		configure_file("yaml-cpp.pc.cmake" ${PC_FILE} @ONLY)
 		install(FILES ${PC_FILE}
-                DESTINATION lib/cmake/yaml-cpp)
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp)
 	endif ()
 endif ()
 
