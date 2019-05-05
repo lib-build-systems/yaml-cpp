@@ -299,7 +299,7 @@ if (YAML_CPP_INSTALL)
 	install(TARGETS yaml-cpp
             EXPORT yaml-cpp-targets)
 	install(DIRECTORY ${header_directory}
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yaml-cpp
             FILES_MATCHING PATTERN "*.h"
 	)
 endif ()
