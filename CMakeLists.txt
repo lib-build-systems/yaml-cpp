@@ -247,9 +247,9 @@ endif ()
 ###
 ### General install settings
 ###
-set(INCLUDE_INSTALL_ROOT_DIR include)
+#set(INCLUDE_INSTALL_ROOT_DIR include)
 
-set(INCLUDE_INSTALL_DIR ${INCLUDE_INSTALL_ROOT_DIR}/yaml-cpp)
+#set(INCLUDE_INSTALL_DIR ${INCLUDE_INSTALL_ROOT_DIR}/yaml-cpp)
 
 
 ###
@@ -299,7 +299,7 @@ if (YAML_CPP_INSTALL)
 	install(TARGETS yaml-cpp
             EXPORT yaml-cpp-targets)
 	install(DIRECTORY ${header_directory}
-            DESTINATION ${INCLUDE_INSTALL_DIR}
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             FILES_MATCHING PATTERN "*.h"
 	)
 endif ()
@@ -326,17 +326,18 @@ if (YAML_CPP_INSTALL)
 	install(FILES
             "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake"
             "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake"
-            DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp" COMPONENT dev)
+            DESTINATION lib/cmake/yaml-cpp
+	    COMPONENT dev)
             
     install(EXPORT yaml-cpp-targets
             NAMESPACE yaml-cpp::
-            DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
+            DESTINATION lib/cmake/yaml-cpp)
 
 	if (UNIX)
 		set(PC_FILE ${CMAKE_BINARY_DIR}/yaml-cpp.pc)
 		configure_file("yaml-cpp.pc.cmake" ${PC_FILE} @ONLY)
 		install(FILES ${PC_FILE}
-                DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/yaml-cpp)
+                DESTINATION lib/cmake/yaml-cpp)
 	endif ()
 endif ()
 
