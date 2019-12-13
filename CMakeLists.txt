@@ -242,13 +242,6 @@ set(INCLUDE_INSTALL_ROOT_DIR include)
 set(INCLUDE_INSTALL_DIR ${INCLUDE_INSTALL_ROOT_DIR}/yaml-cpp)
 set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}")
 
-set(_INSTALL_DESTINATIONS
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-)
-
-
 ###
 ### Library
 ###
@@ -299,9 +292,13 @@ if(MSVC)
 endif()
 
 if (YAML_CPP_INSTALL)
-	install(TARGETS yaml-cpp EXPORT yaml-cpp-targets ${_INSTALL_DESTINATIONS})
-	install(
-		DIRECTORY ${header_directory}
+	install(TARGETS yaml-cpp
+	        EXPORT yaml-cpp-targets
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR})
+	install(DIRECTORY ${header_directory}
 		DESTINATION ${INCLUDE_INSTALL_DIR}
 		FILES_MATCHING PATTERN "*.h"
 	)
@@ -315,7 +312,7 @@ set(EXPORT_TARGETS yaml-cpp CACHE INTERNAL "export targets")
 
 set(CONFIG_INCLUDE_DIRS "${YAML_CPP_SOURCE_DIR}/include")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config.cmake.in
-	"${PROJECT_BINARY_DIR}/yaml-cpp-config.cmake" @ONLY)
+               "${PROJECT_BINARY_DIR}/yaml-cpp-config.cmake" @ONLY)
 
 if(WIN32 AND NOT CYGWIN)
 	set(INSTALL_CMAKE_DIR CMake)
@@ -327,22 +324,26 @@ endif()
 file(RELATIVE_PATH REL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR}" "${CMAKE_INSTALL_PREFIX}/${INCLUDE_INSTALL_ROOT_DIR}")
 set(CONFIG_INCLUDE_DIRS "\${YAML_CPP_CMAKE_DIR}/${REL_INCLUDE_DIR}")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config.cmake.in
-	"${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake" @ONLY)
+               "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake" @ONLY)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config-version.cmake.in
-	"${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake" @ONLY)
+               "${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake" @ONLY)
 
 if (YAML_CPP_INSTALL)
 	install(FILES
 		"${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yaml-cpp-config.cmake"
 		"${PROJECT_BINARY_DIR}/yaml-cpp-config-version.cmake"
-		DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
-	install(EXPORT yaml-cpp-targets DESTINATION ${INSTALL_CMAKE_DIR})
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp"
+		COMPONENT dev)
+	install(EXPORT yaml-cpp-targets
+		NAMESPACE yaml-cpp::
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp)
 
 	if(UNIX)
 		set(PC_FILE ${CMAKE_BINARY_DIR}/yaml-cpp.pc)
 		configure_file("yaml-cpp.pc.cmake" ${PC_FILE} @ONLY)
-		install(FILES ${PC_FILE} DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+		install(FILES ${PC_FILE}
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp/pkgconfig)
 	endif()
 
 endif()
