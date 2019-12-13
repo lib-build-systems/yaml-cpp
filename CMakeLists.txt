@@ -109,6 +109,7 @@ endif()
 ###
 set(yaml_c_flags ${CMAKE_C_FLAGS})
 set(yaml_cxx_flags ${CMAKE_CXX_FLAGS})
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(YAML_BUILD_SHARED_LIBS)
 	set(LABEL_SUFFIX "shared")
